@@ -1,0 +1,4 @@
+"total" : "string",
+"used" : "string",
+"available" : "string",
+"free" : "string"

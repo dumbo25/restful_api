@@ -1,0 +1,2 @@
+"description" : "returns Security server's API navigation"
+
