@@ -1,0 +1,6 @@
+"description" : "string",
+"protocol" : "sring",
+"hostname" : "string",
+"port" : "string",
+"abs" : "string",
+"navigation" : "string"
