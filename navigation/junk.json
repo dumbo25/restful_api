@@ -1,0 +1,66 @@
+{
+     'abs' : '/home/pi/api',
+     'verbs' : ['REST_SERVER', 'GET'],
+     'description' : 'returns server date and time',
+     'schema' : {''} 
+}, {
+     'abs' : '/home/pi/api/navigation',
+     'verbs' : ['GET'],
+     'description' : 'returns server date and time',
+     'schema' : { "hostname" : "string"} 
+}, {
+     'abs' : '/home/pi/api/server',
+     'verbs' : ['GET'],
+     'description' : 'returns server date and time',
+     'schema' : { "hostname" : "string"} 
+}, {
+     'abs' : '/home/pi/api/server/memory',
+     'verbs' : ['GET'],
+     'description' : 'returns server date and time',
+     'schema' : { "total" : "string", "used" : "string", "available" : "string", "free" : "string"} 
+}, {
+     'abs' : '/home/pi/api/server/os',
+     'verbs' : ['GET'],
+     'description' : 'returns server date and time',
+     'schema' : { "distro" : "string"} 
+}, {
+     'abs' : '/home/pi/api/server/reboot',
+     'verbs' : ['GET'],
+     'description' : 'returns server date and time',
+     'schema' : { } 
+}, {
+     'abs' : '/home/pi/api/server/cpu',
+     'verbs' : ['GET'],
+     'description' : 'returns server date and time',
+     'schema' : { "cores" : "string", "frequency" : "string", "used" : "string"} 
+}, {
+     'abs' : '/home/pi/api/server/time',
+     'verbs' : ['GET'],
+     'description' : 'returns server date and time',
+     'schema' : { "date" : "string", "time" : "string"} 
+}, {
+     'abs' : '/home/pi/api/server/uptime',
+     'verbs' : ['GET'],
+     'description' : 'returns server date and time',
+     'schema' : { "days" : "string", "hours" : "string", "minutes" : "string", "seconds" : "string"} 
+}, {
+     'abs' : '/home/pi/api/server/disk',
+     'verbs' : ['GET'],
+     'description' : 'returns server date and time',
+     'schema' : { "total" : "string", "used" : "string", "free" : "string"} 
+}, {
+     'abs' : '/home/pi/api/security',
+     'verbs' : [''],
+     'description' : 'returns server date and time',
+     'schema' : {''} 
+}, {
+     'abs' : '/home/pi/api/database',
+     'verbs' : [''],
+     'description' : 'returns server date and time',
+     'schema' : {''} 
+}, {
+     'abs' : '/home/pi/api/database/schema',
+     'verbs' : [''],
+     'description' : 'returns server date and time',
+     'schema' : {''} 
+}
