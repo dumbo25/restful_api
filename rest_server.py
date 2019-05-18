@@ -40,11 +40,12 @@
 #      $ sudo chmod og+rw /var/www/db/api.db
 #
 # Improvements
-#   ??? /api needs a get.py
-#   ??? each relative directory needs a json file associated with get (and other verbs ???)
-#      ??? need to read and write json for /rel in /api navigation
+#   ??? split api schema into api and api/navigation. the 2nd returns the navigation
+#       navgiation directory needs to be in api schema
+#   ??? /api and api/navigation need a get.py
+#   ??? needs a description in the directory
 #   ??? Client must keep state information
-#   ??? Versioning is not used in HATEOAS - must remove
+#   ??? client-side remove Versioning, which is not used in HATEOAS
 #   ??? client-side needs to be enhanced to get navigation from web server
 #   ??? client-side can cache
 #   ??? client should be able to understand and navigate API by starting at root URI
@@ -134,19 +135,6 @@
 #
 #   ??? renewing the cert should be part of the API, as long as the request is secure
 #
-# Versioning ??? need to remove this
-#   At a minimum, rest_server.py needs to handle current version, last version and next version.
-#   It could handle many more old versions. The client should provide the version it needs.
-#   As an example, say the current version is 1.1, then rest_server.py should support 1.0 (last)
-#   and 2.0 or 1.2 next version. The version is passed through a json file or header
-#   For, rest_client.py Content-Type header should include:
-#
-#      version:1.0
-#      version:1.1
-#      version:2.0
-#
-#   and then the rest_server.py has an Accept *
-#
 #########################
 
 
@@ -182,14 +170,14 @@ MY_LAN = '192.168.1.0/24'
 Port = 9080
 InputFile = ''
 OutputFile = ''
-Path = '/home/pi/'
-LogFile = Path + 'rest_server.log'
+Path = '/home/pi/api'
+LogFile = Path + '/rest_server.log'
 Use_HTTPS = False
 Use_cert = False
 Use_multithreading = False
-ServerKeyFile = Path + 'server.key'
-ServerCertFile = Path + 'server.crt'
-ClientCertFile = Path + 'client.crt'
+ServerKeyFile = Path + '/server.key'
+ServerCertFile = Path + '/server.crt'
+ClientCertFile = Path + '/client.crt'
 
 #########################
 # Log messages should be time stamped
@@ -232,7 +220,7 @@ class customHandler(BaseHTTPRequestHandler):
         self.send_header('Content-type','image/png')
         self.send_header('Access-Control-Allow-Origin', '*')
         self.end_headers()
-        with open("favicon.png", "rb") as fout:
+        with open(Path + "/favicon.png", "rb") as fout:
             self.wfile.write(fout.read())
         return
 
@@ -249,198 +237,17 @@ class customHandler(BaseHTTPRequestHandler):
         self.end_headers()
         return
 
-    def readVersion(self):
-        global Version
-
-        if self.headers != '':
-            Version = self.headers['version']
-        return
-
-    def addSpaces (self, n):
-        s = ""
-        if n > 0:
-            for i in range(n):
-                s += "    "
-        return(s)
-
-    def getSchema(self, file):
-        try:
-            # ??? how to get proper indentation
-            schema = "\"schema\" : { \n"
-            with open(file + ".json", "r") as read_file:
-                schema += read_file.read()
-            schema += "},\n"
-        except:
-            schema = "\"schema\" : { },\n"
-        return(schema)
-
-    def getNavigation(self):
-        # returns navigation for API
-        # ??? build navigation with resource json goes here
-        # ??? move this function to /api/get.py
-
-        root = Path[:len(Path)-1]
-        next = False
-        last_level = 0
-
-        bracket = 0     # bracket = [
-        brace = 0       # brace   = {
-
-        data = "{\n"
-        brace += 1
-
-        for paths, dirs, files in os.walk(Path + 'api'):
-            schema = "\"schema\" : { },\n"
-            verbs = "\"verbs\" : ["
-            next_verb = False
-            for f in files:
-                if None != re.search('.py', f):
-                    if next_verb:
-                        verbs += ", "
-                    verb = f[:len(f)-3]
-                    schema = self.getSchema(paths + "/" + verb)
-                    verb = verb.upper()
-                    verbs += "\"" + verb + "\""
-                    next_verb = True
-            verbs += "],\n"
-
-            p = paths[len(root):]
-            # /api splits into a null entry and api
-            # so the len is one more than expected
-            pc = p.split("/")
-            level = len(pc) - 1
-
-            if (level == last_level):
-                # same level as before
-                if (last_level == 0):
-                    # level should never be 0
-                    print("XX ****** Error ****** \n")
-                else:
-                    # same last_level
-                    brace -= 1
-                    s = self.addSpaces(brace+bracket)
-                    data += s + "AA}\n"
-
-                    bracket -= 1
-                    s = self.addSpaces(brace+bracket)
-                    data += s + "]\n"
-
-                    brace -= 1
-                    s = self.addSpaces(brace+bracket)
-                    data += s + "}, {\n"
-                    brace += 1
-
-                    s = self.addSpaces(brace+bracket)
-                    data += s + "\"rel\" : \"" + pc[level] + "\",\n"
-                    data += s + verbs
-                    data += s + "\"description\" : \"returns server date and time\",\n"
-                    data += s + schema
-                    data += s + "\"links\": [\n"
-                    bracket += 1
-
-                    s = self.addSpaces(brace+bracket)
-                    data += s + "{\n"
-                    brace += 1
-
-                    level = last_level + 1
-            elif (level == (last_level+1)):
-                # increasing by one level
-                if (last_level == 0):
-                    # at first level
-                    s = self.addSpaces(brace+bracket)
-                    data += s + "BB\"rel\" : \"" + pc[level] + "\",\n"
-                    data += s + verbs
-                    data += s + "\"description\" : \"returns server date and time\",\n"
-                    data += s + schema
-                    data += s + "\"links\": [\n"
-                    bracket += 1
-
-                    s = self.addSpaces(brace+bracket)
-                    data += s + "{\n"
-                    brace += 1
-
-                    last_level = last_level + 1
-                else:
-                    # increasing a level and not at beginning
-                    s = self.addSpaces(brace+bracket)
-                    data += s + "CC\"rel\" : \"" + pc[level] + "\",\n"
-                    data += s + verbs
-                    data += s + "\"description\" : \"returns server date and time\",\n"
-                    data += s + schema
-                    data += s + "\"links\": [\n"
-                    bracket += 1
-
-                    s = self.addSpaces(brace+bracket)
-                    data += s + "{\n"
-                    brace += 1
-
-                    last_level = last_level + 1
-            elif (level == (last_level-1)):
-                # backing up a level
-                if (last_level == 0):
-                    # this should be the end
-                    data +=" **** ERROR *****"
-                else:
-                    # backing up a level, but not at beginning
-                    brace -= 1
-                    s = self.addSpaces(brace+bracket)
-                    data += s + "DD}\n"
-
-                    bracket -= 1
-                    s = self.addSpaces(brace+bracket)
-                    data += s + "]\n"
-
-                    if bracket >= 2:
-                        brace -= 1
-                        s = self.addSpaces(brace+bracket)
-                        data += s + "}\n"
-
-                        bracket -= 1
-                        s = self.addSpaces(brace+bracket)
-                        data += s + "]\n"
-
-                    brace -= 1
-                    s = self.addSpaces(brace+bracket)
-                    data += s + "}, {\n"
-                    brace += 1
-
-                    s = self.addSpaces(brace+bracket)
-                    data += s + "\"rel\" : \"" + pc[level] + "\",\n"
-                    data += s + verbs
-                    data += s + "\"description\" : \"returns server date and time\",\n"
-                    data += s + schema
-                    data += s + "\"links\": [\n"
-                    bracket += 1
-
-                    s = self.addSpaces(brace+bracket)
-                    data += s + "{\n"
-                    brace += 1
-            else:
-                data += "**** ERROR ****"
-
-            # for f in files:
-            #     print (f)
-            next = True
-
-        while (brace+bracket) > 0:
-            if brace > 0:
-                brace -= 1
-                s = self.addSpaces(brace+bracket)
-                data += s + "EE}\n"
-
-            if bracket > 0:
-                bracket -= 1
-                s = self.addSpaces(brace+bracket)
-                data += s + "FF]\n"
-
-        print(data)
-        return(data)
-
     def do_GET(self):
         # GET provides read-only access to the server's resources
         global Data
 
-        self.readVersion()
+        pc = Path.split("/")
+        l = len(pc) - 1
+        no_api_path = ""
+        for i in range(l):
+            if pc[i] != "":
+                no_api_path += "/" + pc[i]
+
         printMsg(self.requestline)
         printMsg(self.getClient())
         if Use_multithreading:
@@ -449,26 +256,11 @@ class customHandler(BaseHTTPRequestHandler):
         if self.isClientIpInvalid():
             return
 
-        if '/api' == self.path:
-            Data = self.getNavigation()
-            data = Data
-            self.sendHeaders()
-            self.wfile.write(bytes(json.dumps(data), 'utf-8'))
-            printMsg('')
-            return
-        elif None != re.search('/api/mydata', self.path):
-            self.sendHeaders()
-            with open("/home/pi/data.json", "r") as read_file:
-                data = json.load(read_file)
-            self.wfile.write(bytes(json.dumps(data), 'utf-8'))
-            printMsg('')
-            return
-        elif None != re.search('/api/server', self.path):
+        if None != re.search('/api', self.path):
             data = {}
-            file = Path + 'rest_server.tmp'
-            print(self.path)
             try:
-                exec(open(Path + self.path + "/" + "get.py").read())
+                print("this = " + no_api_path + self.path + "/" + "get.py")
+                exec(open(no_api_path + self.path + "/" + "get.py").read())
                 data = Data
                 self.sendHeaders()
                 self.wfile.write(bytes(json.dumps(data), 'utf-8'))
@@ -478,6 +270,7 @@ class customHandler(BaseHTTPRequestHandler):
                 # unhandled resource
                 self.sendInvalid('Invalid resource requested')
                 printMsg('Invalid resource requested' + '\n')
+                printMsg('')
                 return
         elif None != re.search('/favicon.ico', self.path):
             # ??? add /favicon.ioc to api json file
@@ -493,6 +286,7 @@ class customHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         # POST allows client to add a new resource on the server
+        # ??? needs work should follow get
         # successful request returns a 201
         printMsg(self.path)
         printMsg(self.getClient())
@@ -504,6 +298,7 @@ class customHandler(BaseHTTPRequestHandler):
 
     def do_DELETE(self):
         # DELETE allows a client to remove a server's resources
+        # ??? needs work should follow get
         printMsg(self.path)
         printMsg(self.getClient())
         # dummy code
@@ -514,6 +309,7 @@ class customHandler(BaseHTTPRequestHandler):
 
     def do_PUT(self):
         # PUT alllows client to update an existing resource
+        # ??? needs work should follow get
         printMsg(self.path)
         printMsg(self.getClient())
         # dummy code
@@ -659,5 +455,5 @@ if __name__ == '__main__':
     # run as a script from command line
     main(sys.argv)
 else:
-    # import to another module
+    # ??? could allow import to another module; needs some work
     pass

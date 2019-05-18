@@ -1,6 +1,6 @@
 #!/bin/bash
 
-HOME="/user/pi"
+HOME="/user/pi/api"
 PIDFILE="$HOME/rest_server.pid"
 # echo $PIDFILE
 
