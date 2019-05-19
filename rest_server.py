@@ -11,10 +11,10 @@
 
 #########################
 #
-# The script runs with this command:
+# To run the script:
 #   $ python3 rest_server.py
 #
-# There are multiple ways for a client-side to communicate with this Server-side API (see Help)
+# There are multiple ways for a client-side to communicate with the Server-side API (see Help)
 #
 # This script requires the following:
 #   Two raspberry pis: one running the server-side script and the other running the client-side script
@@ -94,7 +94,7 @@
 #         how a client can process a message
 #         For example, a resource that allows POST, must support GET, which returns schema
 #      Client can use API with no a priori knowledge, except base URI of API (i.e., discoverable)
-#         This means versioning is not required
+#         So, versioning is not required
 #         The entry URI provides a navigation resource (i.e., an object of all other URIs)
 #            Navaigation includes allowed verbs (get, post, put, delete) on the URI and
 #            whether or not the resource is cacheable (i.e., values in object are constant)
@@ -123,7 +123,7 @@
 #   g10guang's post 27JUL2018 in stackoverflow seems to be the most straight forward.
 #
 # HTTP and HTTPS support
-#   In general, only servers that are authorized to use the API should be allowed to do so. This
+#   In general, only servers that are authorized to use the API should be allowed, which
 #   requires opening an SSL socket using a cert.
 #
 #   Run these commands on the server (use defaults and for FQDN use hostanme.local):
@@ -259,7 +259,6 @@ class customHandler(BaseHTTPRequestHandler):
         if None != re.search('/api', self.path):
             data = {}
             try:
-                print("this = " + no_api_path + self.path + "/" + "get.py")
                 exec(open(no_api_path + self.path + "/" + "get.py").read())
                 data = Data
                 self.sendHeaders()

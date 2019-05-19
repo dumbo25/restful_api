@@ -1,2 +1,2 @@
-"description" : "returns Security server's API navigation"
+"description" : "returns Security server's API and link to navigation"
 

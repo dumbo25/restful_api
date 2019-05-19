@@ -38,6 +38,13 @@ for paths, dirs, files in os.walk(Path):
                     schema += '}'
                 except:
                     schema = '"schema" : {}'
+
+                try:
+                    with open(file + ".txt", "r") as read_file:
+                        description = read_file.read()
+                except:
+                    description = ''
+
                 verb = verb.upper()
                 verbs += '"' + verb + '"'
                 next_verb = True
@@ -47,7 +54,7 @@ for paths, dirs, files in os.walk(Path):
     data += '{ '
     data += '    "abs" : "' + paths + '", '
     data += '    ' + verbs
-    data += '    "description" : "returns server date and time", '
+    data += '    ' + description + ', '
     data += '    ' + schema
     data += '}'
 
