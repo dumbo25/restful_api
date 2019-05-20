@@ -1,4 +1,4 @@
-RESTful API client and webserver in python3
+RESTful API webserver in python3
 
 A more complete description of the project is here:
 

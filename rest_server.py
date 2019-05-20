@@ -4,6 +4,12 @@
 #
 # Server-side script for RESTful API sever written in python using json
 #
+# The directory structure essentially defines the API. Each directory requires the following files:
+#   verb = get, put, post, delete
+#   <verb>.py performs the actions of the verb. For a get, it builds a JSON Data structure returned
+#   <verb>.txt describes the API
+#   <verb>.json defines the JSON schema
+#
 # Both client-side and server-side scripts are required for the API to work
 #
 #########################
@@ -23,51 +29,30 @@
 #      $ pip install requests
 #      $ sudo pip3 install distro
 #
-#   Install sqlite3 and inxi:
-#      $ sudo apt-get install sqlite3 -y
-#      $ sudo apt-get install inxi -y
-#
-#   Create databse and a table and then exit sqlite
-#      $ sqlite3 api.db
-#      sqlite > BEGIN;
-#      sqlite > CREATE TABLE status (tdate DATE, ttime TIME, uri TEXT, verbs TEXT, cacheable TEXT);
-#      sqlite > COMMIT;
-#      sqlite> .quit
-#
-#   Move the database and change the permissions
-#      $ sudo mv security.db /var/www/db/api.db
-#      $ sudo chmod og+rw /var/www/db
-#      $ sudo chmod og+rw /var/www/db/api.db
-#
 # Improvements
-#   ??? split api schema into api and api/navigation. the 2nd returns the navigation
-#       navgiation directory needs to be in api schema
-#   ??? /api and api/navigation need a get.py
-#   ??? needs a description in the directory
-#   ??? Client must keep state information
-#   ??? client-side remove Versioning, which is not used in HATEOAS
-#   ??? client-side needs to be enhanced to get navigation from web server
-#   ??? client-side can cache
-#   ??? client should be able to understand and navigate API by starting at root URI
-#   ??? need example of: Get, Post, Delete and Put
-#   ??? update scripts on github
+#   ??? how does importing this as a module work? or will it work
+#   ??? renewing the cert should be part of the API, as long as the request is secure
+#       certs should have their own directory within api
+#   ??? add post, put and delete - but this can wait for actual usage example
 #
 # Each resource has one or more python script verbs (get.py, put.py)
 # Sample directory Structure:
-#   path
-#      api
-#         get.py
-#         get.json
-#         hostname.db
-#         server
-#            get.py
-#            get.json
-#            os
-#               get.py
-#               get.json
-#            memory
-#               get.py
-#               get.json
+#    api
+#       get.py
+#       get.json
+#       get.txt
+#       server
+#          get.py
+#          get.json
+#          get.txt
+#          os
+#             get.py
+#             get.json
+#             get.txt
+#          memory
+#             get.py
+#             get.json
+#             get.txt
 #
 # HTTP status codes:
 #   1xx informational - not used
@@ -132,8 +117,6 @@
 #      $ openssl req -x509 -newkey rsa:4096 -nodes -out client.crt -keyout client.key -days 365
 #
 #   copy the server.crt, client.key and client.crt to the rest_client server
-#
-#   ??? renewing the cert should be part of the API, as long as the request is secure
 #
 #########################
 
@@ -272,8 +255,7 @@ class customHandler(BaseHTTPRequestHandler):
                 printMsg('')
                 return
         elif None != re.search('/favicon.ico', self.path):
-            # ??? add /favicon.ioc to api json file
-            # browsers may request a favicon.ico to display in the tab
+            # This is not part of the API, but browsers may request a favicon.ico to display in the tab
             self.sendIcon()
             printMsg('')
             return
