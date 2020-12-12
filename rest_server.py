@@ -12,18 +12,23 @@
 #
 # Both client-side and server-side scripts are required for the API to work
 #
+# The default path to the API directory is /home/pi/api
+#
 #########################
 
 
 #########################
 #
 # To run the script:
-#   $ python3 rest_server.py
+#   $ python3 /home/pi/api/rest_server.py
+# or to run without waiting
+#   $ python3 /home/pi/api/rest_server.py &
 #
 # There are multiple ways for a client-side to communicate with the Server-side API (see Help)
 #
 # This script requires the following:
-#   Two raspberry pis: one running the server-side script and the other running the client-side script
+#   Two raspberry pis: one running the server-side script (rest_server.py) and the other running 
+#   the client-side script (rest_client.py)
 #
 #   Add the requests and distro modules:
 #      $ pip install requests
@@ -132,6 +137,7 @@ import threading
 import socket
 import re
 import os
+import subprocess
 import sys
 import getopt
 import ipaddress
@@ -149,7 +155,7 @@ MY_LAN = '192.168.1.0/24'
 #########################
 # use first CAP for global variables
 #
-# use high numbered port (90xx) indicating it is using http (port 80) and 9443 for https
+# use high numbered port (e.g., 90xx) indicating it is using http (port 80) and 9443 for https
 Port = 9080
 InputFile = ''
 OutputFile = ''
@@ -161,6 +167,7 @@ Use_multithreading = False
 ServerKeyFile = Path + '/server.key'
 ServerCertFile = Path + '/server.crt'
 ClientCertFile = Path + '/client.crt'
+Debug = False
 
 #########################
 # Log messages should be time stamped
@@ -169,14 +176,18 @@ def timeStamp():
     s = datetime.datetime.fromtimestamp(t).strftime('%Y/%m/%d %H:%M:%S - ')
     return s
 
-# Write messages in a standard format
 def printMsg(s):
     if s == '':
         LogFileObject.write("\n")
+        if Debug:
+            print('')
     else:
         LogFileObject.write(timeStamp() + s + "\n")
+        if Debug:
+            print(timeStamp() + s)
 
     LogFileObject.flush()
+
 
 #########################
 
@@ -186,6 +197,7 @@ class ThreadingSimpleServer(ThreadingMixIn, HTTPServer):
 class customHandler(BaseHTTPRequestHandler):
     def getClient(self):
         c = str(self.client_address[0]) + " " + str(self.client_address[1])
+        printMsg('Client is: ' + c)
         return(c)
 
     # only allow the API to be used by other servers on my LAN
@@ -193,7 +205,9 @@ class customHandler(BaseHTTPRequestHandler):
         network= ipaddress.ip_network(MY_LAN)
         client = ipaddress.ip_address(self.client_address[0])
         if (client in ipaddress.ip_network(MY_LAN)):
+            printMsg('Client IP is valid: ' + str(client))
             return(False)
+        printMsg('Client IP is invalid')
         self.sendInvalid('Client IP address is invalid')
         return(True)
 
@@ -312,13 +326,14 @@ def cmdLine(argv):
     global LogFile
     global Use_HTTPS
     global Use_cert
+    global Debug
     global Use_multithreading
 
     port_set = False
     try:
         # new options must be added here:
-        validOpts = "hci:l:mp:s"
-        opts, args = getopt.getopt(argv,validOpts,["help=", "cert", "inputfile=", "logfile=", "multithreading", "port=", "secure"])
+        validOpts = "hcdi:l:mp:s"
+        opts, args = getopt.getopt(argv,validOpts,["help=", "cert", "debug", "inputfile=", "logfile=", "multithreading", "port=", "secure"])
     except getopt.GetoptError:
         print('rest_server.py [options, ...]' )
         print('rest_server.py -h' )
@@ -329,10 +344,11 @@ def cmdLine(argv):
         if opt in ('-h', "--help"):
             print('Decription: ')
             print('  Server-side script for RESTful API sever written in python using json')
+            print('  Replace angle brackets with actual value.')
             print('  There are multiple ways for a client-side server to communicate with this server-side API:')
             print('    A client-side script can make HTTP requests (see rest_client.py)')
-            print('    Open a browser and enter: http://security:9080/api/multi/10/23')
-            print('    Open a terminal and run: $ curl -X GET http://security:9080/api/multi/10/23')
+            print('    Open a browser and enter: http://<server-hostname>:<port>/api/cpu')
+            print('    Open a terminal and run: $ curl -X GET http://<server-hostname>:<port>/api/cpu')
             print('')
             print('Usage:')
             print('  python3 rest_server.py [options...]')
@@ -340,6 +356,7 @@ def cmdLine(argv):
             print('Options:')
             print('  -h --help           this help')
             print('  -c --cert           Use cert, requires use https')
+            print('  -d --debug          debug mode')
             print('  -i --inputfile      input json file')
             print('  -l --logfile        write log messages to user specified file')
             print('  -m --multithreading use multithreading')
@@ -348,6 +365,8 @@ def cmdLine(argv):
             sys.exit()
         elif opt in ("-c", "--cert"):
             Use_cert = True
+        elif opt in ("-d", "--debug"):
+            Debug = True
         elif opt in ("-i", "--inputfile"):
             InputFile = arg
         elif opt in ("-l", "--logfile"):
@@ -394,12 +413,16 @@ def main(sysargv):
     hostname = socket.gethostname()
     printMsg('Web Server:')
     printMsg("  Server name = " + hostname)
-    host_ip = socket.gethostbyname(hostname)
+    local_host_ip = socket.gethostbyname(hostname)
+    printMsg("  Server IP = " + local_host_ip)
+    printMsg('')
+
+    host_ip = subprocess.check_output(['hostname', '-s', '-I']).decode('utf-8')[:-1]
     printMsg("  Server IP = " + host_ip)
     printMsg('')
 
     # create a handle for the server-side using the host information
-    rest_server = (host_ip, Port)
+    rest_server = (local_host_ip, Port)
 
     if Use_multithreading:
         # threaded server
@@ -409,6 +432,7 @@ def main(sysargv):
         httpd = HTTPServer(rest_server, customHandler)
 
     if Use_HTTPS and Use_cert:
+        printMsg("  Using HTTPS and cert")
         context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
         context.verify_mode = ssl.CERT_REQUIRED
         context.load_cert_chain(certfile=ServerCertFile, keyfile=ServerKeyFile)
@@ -419,10 +443,15 @@ def main(sysargv):
         if Use_HTTPS:
              if Use_cert:
                  httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
+                 printMsg("  Got socket for HTTPS and cert")
              else:
-                 httpd.socket = ssl.wrap_socket(httpd.socket, keyfile=ServerKeyFile, certfile=ServerCertFile, server_side=True)
+                 httpd.socket = ssl.wrap_socket(httpd.socket, keyfile=ServerKeyFile, certfile=ServerCertFile$
+                 printMsg("  Got socket for HTTPS with no cert")
+        else:
+             printMsg("  No socket is required for HTTP?")
 
         httpd.serve_forever()
+                                                
     except KeyboardInterrupt:
         pass
 
