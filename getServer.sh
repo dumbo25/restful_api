@@ -10,7 +10,7 @@ cd api
 wget https://raw.githubusercontent.com/dumbo25/restful_api/master/README.md
 wget https://https://github.com/dumbo25/restful_api/blob/master/favicon.png
 wget https://raw.githubusercontent.com/dumbo25/restful_api/master/get.json
-wget https://raw.githubusercontent.com/dumbo25/restful_api/master/get,txt
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/get.txt
 wget https://raw.githubusercontent.com/dumbo25/restful_api/master/rest_server.py
 wget https://raw.githubusercontent.com/dumbo25/restful_api/master/server_cron.sh
 
