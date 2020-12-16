@@ -16,50 +16,50 @@ wget https://raw.githubusercontent.com/dumbo25/restful_api/master/server_cron.sh
 
 mkdir cpu
 cd ~/api/cpu/.
-wget https://raw.githubusercontent.com/dumbo25/restful_api/master/server/cpu/get.json
-wget https://raw.githubusercontent.com/dumbo25/restful_api/master/server/cpu/get.py
-wget https://raw.githubusercontent.com/dumbo25/restful_api/master/server/cpu/get.txt
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/cpu/get.json
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/cpu/get.py
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/cpu/get.txt
 
 cd ~/api
 mkdir disk
 cd ~/api/disk/.
-wget https://raw.githubusercontent.com/dumbo25/restful_api/master/server/disk/get.json
-wget https://raw.githubusercontent.com/dumbo25/restful_api/master/server/disk/get.py
-wget https://raw.githubusercontent.com/dumbo25/restful_api/master/server/disk/get.txt
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/disk/get.json
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/disk/get.py
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/disk/get.txt
 
 cd ~/api
 mkdir memory
 cd ~/api/memory/.
-wget https://raw.githubusercontent.com/dumbo25/restful_api/master/server/memory/get.json
-wget https://raw.githubusercontent.com/dumbo25/restful_api/master/server/memory/get.py
-wget https://raw.githubusercontent.com/dumbo25/restful_api/master/server/memory/get.txt
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/memory/get.json
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/memory/get.py
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/memory/get.txt
 
 cd ~/api
 mkdir os
 cd ~/api/os/.
-wget https://raw.githubusercontent.com/dumbo25/restful_api/master/server/os/get.json
-wget https://raw.githubusercontent.com/dumbo25/restful_api/master/server/os/get.py
-wget https://raw.githubusercontent.com/dumbo25/restful_api/master/server/os/get.txt
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/os/get.json
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/os/get.py
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/os/get.txt
 
 cd ~/api
 mkdir reboot
 cd ~/api/reboot/.
-wget https://raw.githubusercontent.com/dumbo25/restful_api/master/server/reboot/get.json
-wget https://raw.githubusercontent.com/dumbo25/restful_api/master/server/reboot/get.py
-wget https://raw.githubusercontent.com/dumbo25/restful_api/master/server/reboot/get.txt
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/reboot/get.json
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/reboot/get.py
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/reboot/get.txt
 
 cd ~/api
 mkdir time
 cd ~/api/time/.
-wget https://raw.githubusercontent.com/dumbo25/restful_api/master/server/time/get.json
-wget https://raw.githubusercontent.com/dumbo25/restful_api/master/server/time/get.py
-wget https://raw.githubusercontent.com/dumbo25/restful_api/master/server/time/get.txt
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/time/get.json
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/time/get.py
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/time/get.txt
 
 cd ~/api
 mkdir uptime
 cd ~/api/uptime/.
-wget https://raw.githubusercontent.com/dumbo25/restful_api/master/server/uptime/get.json
-wget https://raw.githubusercontent.com/dumbo25/restful_api/master/server/uptime/get.py
-wget https://raw.githubusercontent.com/dumbo25/restful_api/master/server/uptime/get.txt
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/uptime/get.json
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/uptime/get.py
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/uptime/get.txt
 
 
