@@ -38,6 +38,13 @@ wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/memory/get
 wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/memory/get.txt
 
 cd ~/api
+mkdir navigation
+cd ~/api/navigation/.
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/navigation/get.json
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/navigation/get.py
+wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/navigation/get.txt
+
+cd ~/api
 mkdir os
 cd ~/api/os/.
 wget https://raw.githubusercontent.com/dumbo25/restful_api/master/api/os/get.json
