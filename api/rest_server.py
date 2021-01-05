@@ -160,13 +160,14 @@ Port = 9080
 InputFile = ''
 OutputFile = ''
 Path = '/home/pi/api'
+CertPath = '/home/pi/certs'
 LogFile = Path + '/rest_server.log'
 Use_HTTPS = False
 Use_cert = False
 Use_multithreading = False
-ServerKeyFile = Path + '/server.key'
-ServerCertFile = Path + '/server.crt'
-ClientCertFile = Path + '/client.crt'
+ServerKeyFile = Path + '/server-key.pem'
+ServerCertFile = Path + '/server-crt.pem'
+ClientCertFile = Path + '/client-crt.pem'
 Debug = False
 
 #########################
